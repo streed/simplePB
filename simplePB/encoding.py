@@ -2,8 +2,11 @@ import math
 
 class Encode( object ):
 
-	def __init__( self ):
-		pass
+	def __init__( self, **kwargs ):
+		self._id = 0
+
+	def _set_id( self, _id ):
+		self._id = _id
 
 	def encode( self, value ):
 		raise NotImplemented( "An Encode subclass must define a `encode` method." )
@@ -14,6 +17,11 @@ class Encode( object ):
 
 class Int( Encode ):
 	
+	_TYPE = 0
+	
+	def __init__( self, **kwargs ):
+		pass
+
 	def encode( self, value ):
 		if value == 0 :
 			return 0
