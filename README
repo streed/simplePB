@@ -17,15 +17,13 @@ constraints on the length of the first and last name strings.
 
 Then to actually create a message you simply do the following:
 
-    person = Person()
+    me = Person()
+    me.first_name = "Sean"
+    me.last_name = "Reed"
+    me.age = 21
 
-    me = person.new( first_name="Sean", last_name="Reed", age=10 )
-
-This will print out the pretty print version of this class.
+This will print out the hex string encoded value of this object:
 
     print me.encode()
-
-This will print out the binary encoded value.
-
 
 That's all there is to make your protocol buffer classes and use them.
