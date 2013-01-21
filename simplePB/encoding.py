@@ -19,9 +19,6 @@ class Int( Encode ):
 	
 	_TYPE = 0
 	
-	def __init__( self, **kwargs ):
-		pass
-
 	def encode( self, value ):
 		if value == 0 :
 			return 0
@@ -62,3 +59,31 @@ class Int( Encode ):
 
 		return ret
 
+class String( Encode ):
+
+	_TYPE = 1
+	_int = Int()
+
+	def encode( self, value ):
+		if value == "":
+			return 0
+
+		length = String._int.encode( len( value ) )
+
+		ret = length
+		for c in value:
+			ret = ( ret << 8 ) | ord( c )
+		return ret
+
+	def decode( self, value ):
+		ret = []
+
+		while value > 0:
+			group = value & 0xFF
+			ret.append( chr( group ) )
+
+			value = value >> 8
+
+		ret.reverse()
+
+		return "".join( ret )
