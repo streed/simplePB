@@ -1,7 +1,7 @@
 from nose.tools import assert_equals, assert_true
 
 from simplePB.protocol import Protocol
-from simplePB.encoding import Int
+from simplePB.encoding import Int, String
 
 class Test( Protocol ):
 	test_num = Int()
@@ -23,4 +23,19 @@ def test_Protocol_encodes_the_values_properly():
 
 	t = Test( test_num = 300, another_num = 100 )
 
-	assert_equals( "006408AC02", t.encode() )
+	assert_equals( "0648AC02", t.encode() )
+
+class Person( Protocol ):
+	first_name = String()
+	last_name = String()
+	age = Int()
+
+def test_Protocol_encodes_to_proper_values_with_intermixed_types():
+
+	person = Person()
+
+	person.first_name = "Sean"
+	person.last_name = "Reed"
+	person.age = 21
+
+	assert_equals( "015945365616E11452656564", person.encode() )

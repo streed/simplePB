@@ -65,6 +65,6 @@ class Protocol( object ):
 			header = ( _id << 3 ) | _type._TYPE
 			body = _type.encode( v )
 			
-			fields.append( [ header, body ] )
+			fields.append( [ header, body ] )	
 		
-		return "".join( [ "%02X%02X" % ( h, b ) for h, b in fields ] )
+		return "".join( [ "%X%X" % ( h, b ) for h, b in fields ] )
