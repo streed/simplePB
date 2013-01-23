@@ -15,6 +15,19 @@ class Encode( object ):
 		raise NotImplemented( "An Encode subclass must define a `decode` method." )
 
 
+class ZigZag( object ):
+	@classmethod
+	def encode( cls, v ):
+		if v >= 0:
+			return v << 1
+		return ( v << 1 ) ^ ( ~0 )
+
+	@classmethod
+	def decode( cls, v ):
+		if not v & 0x01:
+			return v >> 1
+		return ( v >> 1 ) ^ ( ~0 )
+
 class Int( Encode ):
 	
 	_TYPE = 0
@@ -23,25 +36,21 @@ class Int( Encode ):
 		if value == 0 :
 			return 0
 
-		groups = []
+		value = ZigZag.encode( value )
+
 		overflow = 0
+		ret = 0
 		while value > 0:
 			group = value & 0x7F
 			cont_bit = 1 if value > 0x7F else 0
 			overflow = 1 if value & 0x80 == 0x80 else 0
 
 			group = ( cont_bit << 7 ) | group
-			groups.append( group )
+			ret = ( ret << 8 ) | group
 			value = value >> 7
 
 		if overflow == 1:
-			groups.append( overflow )
-
-		ret = 0
-		shift = 0
-		for i in groups[::-1]:
-			ret = ret | ( i << shift )	
-			shift += 8
+			ret = ( ret << 8 ) | overflow
 
 		return ret
 
@@ -50,14 +59,10 @@ class Int( Encode ):
 		shift = 0
 		while value > 0:
 			group = value & 0x7F
-
-			ret = ( ret << shift ) | group
-
-			shift += 7
-
+			ret = ( ret << 7 ) | group
 			value = value >> 8
 
-		return ret
+		return ZigZag.decode( ret )
 
 class String( Encode ):
 
@@ -73,6 +78,7 @@ class String( Encode ):
 		ret = length
 		for c in value:
 			ret = ( ret << 8 ) | ord( c )
+
 		return ret
 
 	def decode( self, value ):
@@ -87,3 +93,5 @@ class String( Encode ):
 		ret.reverse()
 
 		return "".join( ret )
+
+
