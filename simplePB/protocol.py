@@ -1,4 +1,4 @@
-from simplePB.encoding import Encode
+from simplePB.encoding import Encode, Int, String
 
 class _ProtocolMetaClass( type ):
 
@@ -9,7 +9,7 @@ class _ProtocolMetaClass( type ):
 		keys.sort()
 		for a in keys:
 			tmp[a] = dct[a]
-			if isinstance( dct[a], Encode ):
+			if isinstance( dct[a], Encode ) and not a in [ "_int", "_string" ]:
 				tmp["_%s" % a] = dct[a]
 				tmp[a] = None
 				fields.append( a )
@@ -42,14 +42,10 @@ class Protocol( object ):
 	"""
 
 	__metaclass__ = _ProtocolMetaClass
+	 
+	_int = Int()
+	_string = String()
 
-
-	def from_string( self, string ):
-		"""
-			This method will take a string and extract the values and assign the proper
-			attribute it's associated value.
-		"""
-		pass
 
 	def encode( self ):
 		"""
@@ -74,9 +70,69 @@ class Protocol( object ):
 			v = getattr( self, a )
 			_type = getattr( self, "_%s" % a )
 
-			header = ( _id << 3 ) | _type._TYPE
-			body = _type.encode( v )
-			
-			fields.append( [ header, body ] )	
+			header = ( _id << 3 ) | ( _type._TYPE & 0b00000111 )
+			body = self.__convert_body_to_string( _type.encode( v ) )
 		
-		return "".join( [ "%X%X" % ( h, b ) for h, b in fields ] )
+			fields.append(  ( header, body ) )
+		
+		return "".join( [ "%02X%s" % ( h, b ) for h, b in fields ] )
+
+	def decode( self, value ):
+		value = "".join( reversed( [ value[i:i+2] for i in xrange( 0, len( value ), 2 ) ] ) )
+		value = int( value, 16 )
+
+		while value > 0:
+			v = value & 0xFF
+
+			_type = v & 0b00000111
+			_id = ( v & 0b11111000 ) >> 3
+
+			decoder = getattr( self, "_%s" % self._fields[_id] )
+
+			value = value >> 8
+			if _type == Int._TYPE:
+				decoded_value, value = self.__get_integer( value )
+				setattr( self, self._fields[_id], decoded_value )
+			elif _type == String._TYPE:
+				_str, value = self.__get_string( value )
+				setattr( self, self._fields[_id], _str )
+			else:
+				value = value >> 8
+
+	def __get_string( self, value ):
+		length, value = self.__get_integer( value )
+
+		_str = 0
+		for i in xrange( length ):
+			v = value & 0xFF
+			_str = ( _str << 8 ) | v
+			value = value >> 8
+
+		return ( Protocol._string.decode( _str ), value )
+
+	def __get_integer( self, value ):
+		cont_int = True
+		ret = 0
+		while cont_int:
+			v = value & 0x7F
+			if v & 0x80 == 0:
+				cont_int = False
+			ret = ( ret << 8 ) | v	
+			value = value >> 8
+
+		ret = Protocol._int.decode( ret )
+
+		return ( ret, value )
+
+	def __convert_body_to_string( self, value ):
+		ret = []
+
+		while value > 0:
+			v = value & 0xFF
+
+			ret.append( "%02X" % v )
+
+			value = value >> 8
+
+		ret.reverse()
+		return "".join( ret )

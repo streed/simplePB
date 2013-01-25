@@ -22,7 +22,7 @@ def test_Protocol_encodes_the_values_properly():
 
 	t = Test( test_num = 300, another_num = 150 )
 
-	assert_equals( "0AC028D804", t.encode() )
+	assert_equals( "00AC0208D804", t.encode() )
 
 class Person( Protocol ):
 	first_name = String()
@@ -37,4 +37,14 @@ def test_Protocol_encodes_to_proper_values_with_intermixed_types():
 	person.last_name = "Reed"
 	person.age = 21
 
-	assert_equals( "02A985365616E11852656564", person.encode() )
+	assert_equals( "002A09085365616E110852656564", person.encode() )
+
+def test_Protocol_decodes_and_sets_the_proper_fields():
+
+	person = Person()
+
+	person.decode( "002A09085365616E110852656564" )
+
+	assert_equals( 21, person.age )
+	assert_equals( "Sean", person.first_name )
+	assert_equals( "Reed", person.last_name )
