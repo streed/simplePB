@@ -77,7 +77,15 @@ class Protocol( object ):
 		
 		return "".join( [ "%02X%s" % ( h, b ) for h, b in fields ] )
 
+	
 	def decode( self, value ):
+		"""
+			This method should receive a properly encoded string that represents a integer.
+			The length of the string must be divisible by 2
+
+			The function after parsing the integer will set the correct attributes to their
+			respective values.
+		"""
 		value = "".join( reversed( [ value[i:i+2] for i in xrange( 0, len( value ), 2 ) ] ) )
 		value = int( value, 16 )
 
@@ -99,7 +107,12 @@ class Protocol( object ):
 			else:
 				value = value >> 8
 
+
 	def __get_string( self, value ):
+		"""
+			This will return the string represented by the assocaited bytes.
+			It will also advance _value_ along as it parses the string.
+		"""
 		length, value = self.__get_integer( value )
 
 		_str = 0
@@ -110,7 +123,12 @@ class Protocol( object ):
 
 		return ( Protocol._string.decode( _str ), value )
 
+
 	def __get_integer( self, value ):
+		"""
+			This will start where a integer is found and return the integer represented
+			as well as the advanced _value_ to continue parsing.
+		"""
 		cont_int = True
 		ret = 0
 		while cont_int:
@@ -124,15 +142,21 @@ class Protocol( object ):
 
 		return ( ret, value )
 
-	def __convert_body_to_string( self, value ):
-		ret = []
 
+	def __convert_body_to_string( self, value ):
+		"""
+			Because of how the data is formated wherein each byte is represented by
+			2 characters this will take the current _value_ which is a interger and
+			convert it to a string such that every 8bits will be represented by 2
+			hexidecimal characters.
+		"""
+		ret = []
 		while value > 0:
 			v = value & 0xFF
-
 			ret.append( "%02X" % v )
-
 			value = value >> 8
 
 		ret.reverse()
 		return "".join( ret )
+
+
