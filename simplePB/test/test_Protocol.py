@@ -8,7 +8,6 @@ class Test( Protocol ):
 	another_num = Int()
 
 	def __init__( self, test_num=0, another_num=0 ):
-		Protocol.__init__( self )
 		self.test_num = test_num
 		self.another_num = another_num
 

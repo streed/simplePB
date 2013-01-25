@@ -1,5 +1,23 @@
 from simplePB.encoding import Encode
 
+class _ProtocolMetaClass( type ):
+
+	def __new__( cls, name, bases, dct ):
+		fields = []
+		tmp = {}
+		keys = dct.keys()
+		keys.sort()
+		for a in keys:
+			tmp[a] = dct[a]
+			if isinstance( dct[a], Encode ):
+				tmp["_%s" % a] = dct[a]
+				tmp[a] = None
+				fields.append( a )
+
+		dct = tmp
+		dct["_fields"] = fields
+
+		return type.__new__( cls, name, bases, dct )
 class Protocol( object ):
 	"""
 		For example:
@@ -17,20 +35,14 @@ class Protocol( object ):
 		
 		The following fields will exist in the Person class:
 
-		`_fields` - This will be a _dict_ that will map the field name to it's position.
+		`_fields` - This will be a _list_ will contain  the fields to encode. The list holds the 
+			order in which they are encoded in the final output string. This is alphabetical
+			order.
 
 	"""
 
-	def __init__( self ):
-		self._fields = []
-		for a in dir( self ):
-			attr = getattr( self, a )
+	__metaclass__ = _ProtocolMetaClass
 
-			if isinstance( attr, Encode ):
-				setattr( self, "_%s" % a, attr )
-				setattr( self, a, None )
-
-				self._fields.append( a )
 
 	def from_string( self, string ):
 		"""
