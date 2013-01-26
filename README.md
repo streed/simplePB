@@ -9,7 +9,7 @@ that is cross language and is done off of their `.proto` files.
 
 Messages are descirbed by simply defining class such as the Person below.
 
-```pythhon
+```python
 class Person( Protocol ):
  first_name = String( 10 ) #Max string length of 10.
  last_name = String( 10 )  #Max string length of 10.
