@@ -1,5 +1,8 @@
 from simplePB.encoding import Encode, Int, String
 
+class Protocol( object ):
+	pass
+
 class _ProtocolMetaClass( type ):
 
 	def __new__( cls, name, bases, dct ):
@@ -12,6 +15,9 @@ class _ProtocolMetaClass( type ):
 			if isinstance( dct[a], Encode ) and not a in [ "_int", "_string" ]:
 				tmp["_%s" % a] = dct[a]
 				tmp[a] = None
+				fields.append( a )
+			elif isinstance( dct[a], Protocol ):
+				tmp["_%s" % a ] = dct[a]
 				fields.append( a )
 
 		dct = tmp
@@ -42,6 +48,8 @@ class Protocol( object ):
 	"""
 
 	__metaclass__ = _ProtocolMetaClass
+
+	_TYPE = 7
 	 
 	_int = Int()
 	_string = String()
@@ -71,14 +79,18 @@ class Protocol( object ):
 			_type = getattr( self, "_%s" % a )
 
 			header = ( _id << 3 ) | ( _type._TYPE & 0b00000111 )
-			body = self.__convert_body_to_string( _type.encode( v ) )
-		
+			body = ""
+			if isinstance( _type, Protocol ):
+				body = _type.encode()
+			else:
+				body = self.__convert_body_to_string( _type.encode( v ) )
+	
 			fields.append(  ( header, body ) )
-		
+	
 		return "".join( [ "%02X%s" % ( h, b ) for h, b in fields ] )
 
 	
-	def decode( self, value ):
+	def decode( self, value, in_partial=False ):
 		"""
 			This method should receive a properly encoded string that represents a integer.
 			The length of the string must be divisible by 2
@@ -86,10 +98,12 @@ class Protocol( object ):
 			The function after parsing the integer will set the correct attributes to their
 			respective values.
 		"""
-		value = "".join( reversed( [ value[i:i+2] for i in xrange( 0, len( value ), 2 ) ] ) )
-		value = int( value, 16 )
+		num_processed_fields = 0
+		if not in_partial:
+			value = "".join( reversed( [ value[i:i+2] for i in xrange( 0, len( value ), 2 ) ] ) )
+			value = int( value, 16 )
 
-		while value > 0:
+		while value > 0 and num_processed_fields < len( self._fields ):
 			v = value & 0xFF
 
 			_type = v & 0b00000111
@@ -104,8 +118,23 @@ class Protocol( object ):
 			elif _type == String._TYPE:
 				_str, value = self.__get_string( value )
 				setattr( self, self._fields[_id], _str )
+			elif _type == Protocol._TYPE:
+				obj, value = self.__get_object( self._fields[_id], value )
+				setattr( self, self._fields[_id], obj )
+				pass
 			else:
 				value = value >> 8
+
+			num_processed_fields += 1
+
+		if in_partial:
+			return self, value
+
+
+	def __get_object( self, name, value ):
+		proto = getattr( self, "_%s" % name )
+
+		return proto.decode( value, in_partial=True )
 
 
 	def __get_string( self, value ):

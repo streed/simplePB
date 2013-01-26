@@ -29,6 +29,10 @@ class Person( Protocol ):
 	last_name = String()
 	age = Int()
 
+class Couple( Protocol ):
+	boy = Person()
+	girl = Person()
+
 def test_Protocol_encodes_to_proper_values_with_intermixed_types():
 
 	person = Person()
@@ -48,3 +52,31 @@ def test_Protocol_decodes_and_sets_the_proper_fields():
 	assert_equals( 21, person.age )
 	assert_equals( "Sean", person.first_name )
 	assert_equals( "Reed", person.last_name )
+
+def test_Protocol_encodes_with_nested_Protocols():
+	couple = Couple()
+
+	couple.boy.first_name = "Sean"
+	couple.boy.last_name = "Reed"
+	couple.boy.age = 21
+
+	couple.girl.first_name = "Liss"
+	couple.girl.last_name = "Looo"
+	couple.girl.age = 21
+
+	assert_equals( "07002A09085365616E1108526565640F002A09084C69737311084C6F6F6F", couple.encode() )
+
+def test_Protocol_decodes_nested_Protocols():
+	couple = Couple()
+
+	couple.decode( "07002A09085365616E1108526565640F002A09084C69737311084C6F6F6F" )
+
+	b = couple.boy
+	assert_equals( "Sean", b.first_name )
+	assert_equals( "Reed", b.last_name )
+	assert_equals( 21, b.age )
+
+	g = couple.girl
+	assert_equals( "Liss", g.first_name )
+	assert_equals( "Looo", g.last_name )
+	assert_equals( 21, g.age )
