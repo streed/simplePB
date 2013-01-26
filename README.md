@@ -10,20 +10,20 @@ that is cross language and is done off of their `.proto` files.
 Messages are descirbed by simply defining class such as the Person below.
 
 ```pythhon
-    class Person( Protocol ):
-     first_name = String( 10 ) #Max string length of 10.
-     last_name = String( 10 )  #Max string length of 10.
-     age = Int()               #Keep track of their age.
+class Person( Protocol ):
+ first_name = String( 10 ) #Max string length of 10.
+ last_name = String( 10 )  #Max string length of 10.
+ age = Int()   #Keep track of their age.
 ```
 
 It is very clear what this `Person` entails: A `first_name`, `last_name`, and their `age`.
 These attributes can be modified and changed as seen fit to best describe the `Person`.
 
 ```python
-    me = Person()
-    me.first_name = "Sean"
-    me.last_name = "Reed"
-    me.age = 21
+me = Person()
+me.first_name = "Sean"
+me.last_name = "Reed"
+me.age = 21
 ```
 
 The above describes `me` and sets up the _Protocol_ object to contain the required information.
@@ -31,6 +31,20 @@ When it comes to transmit or store this messge the `encode` method should be cal
 method will return a hex encoded string. The above message will become the following hex string
 once it is printed out `002A09085365616E110852656564`. Once this is save the object can quickly
 and easily be restored by calling the `decode` method and passing the above hex string to it.
+
+Complex messages can easily be built up by nesting _Protocol_ classes inside of each other.
+To extend on the _Person_ above we will make a _Family_ messge.
+
+```python
+class Family( Protocol ):
+ father = Person()
+ mother = Person()
+ oldest_child = Person()
+ youngest_child = Person()
+```
+
+Describing a family as the above _Family_ message is very easy and natural. It will again encode
+into a hex string which can be transmitted or stored.
 
 The above way of describing the class is very natural and requires no outside dependencies,
 besides this library.
