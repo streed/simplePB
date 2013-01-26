@@ -2,8 +2,6 @@ Simple Protocol Buffers
 =======================
 [![Build Status](https://travis-ci.org/streed/simplePB.png?branch=master)](https://travis-ci.org/streed/simplePB)
 
-Info
-====
 This is a copy of the project that Google has that implements Protocol Buffers in a manner
 that is cross language and is done off of their `.proto` files. 
 
@@ -27,10 +25,11 @@ me.age = 21
 ```
 
 The above describes `me` and sets up the _Protocol_ object to contain the required information.
-When it comes to transmit or store this messge the `encode` method should be called. This
+When it comes to transmit or store this message the `encode` method should be called. This
 method will return a hex encoded string. The above message will become the following hex string
-once it is printed out `002A09085365616E110852656564`. Once this is save the object can quickly
-and easily be restored by calling the `decode` method and passing the above hex string to it.
+once it is printed out `002A09085365616E110852656564`. After it has been saved the object can
+quickly and easily be restored by calling the `decode` method and passing the above hex string 
+to it.
 
 Complex messages can easily be built up by nesting _Protocol_ classes inside of each other.
 To extend on the _Person_ above we will make a _Family_ messge.
