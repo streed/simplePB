@@ -61,7 +61,6 @@ class Int( Encode ):
 			group = value & 0x7F
 			ret = ( ret << 7 ) | group
 			value = value >> 8
-
 		return ZigZag.decode( ret )
 
 class String( Encode ):
@@ -93,5 +92,30 @@ class String( Encode ):
 		ret.reverse()
 
 		return "".join( ret )
+
+
+class List( Encode ):
+	
+	_TYPE = 2
+	_int = Int()
+
+	def __init__( self, encoder ):
+		self.encoder = encoder
+
+
+	def encode( self, value ):
+		length = List._int.encode( len( value ) )
+
+		ret = length
+		shift = 0
+		for v in value:
+			temp = self.encoder.encode( v )	
+
+			#get number of bits rounded to the nearest 8
+			bits = math.log( temp, 2 )
+			shift_distance = int( math.ceil( bits / 8 ) * 8 )
+			ret = ( ret << shift_distance ) | temp
+		
+		return ret
 
 

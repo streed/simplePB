@@ -1,4 +1,4 @@
-from simplePB.encoding import Encode, Int, String
+from simplePB.encoding import Encode, Int, String, List
 
 class Protocol( object ):
 	pass
@@ -14,7 +14,10 @@ class _ProtocolMetaClass( type ):
 			tmp[a] = dct[a]
 			if isinstance( dct[a], Encode ) and not a in [ "_int", "_string" ]:
 				tmp["_%s" % a] = dct[a]
-				tmp[a] = None
+				if isinstance( dct[a], List ):
+					tmp[a] = []
+				else:
+					tmp[a] = None
 				fields.append( a )
 			elif isinstance( dct[a], Protocol ):
 				tmp["_%s" % a ] = dct[a]
@@ -118,6 +121,9 @@ class Protocol( object ):
 			elif _type == String._TYPE:
 				_str, value = self.__get_string( value )
 				setattr( self, self._fields[_id], _str )
+			elif _type == List._TYPE:
+				_list, value = self.__get_list( value, decoder.encoder )
+				setattr( self, self._fields[_id], _list )
 			elif _type == Protocol._TYPE:
 				obj, value = self.__get_object( self._fields[_id], value )
 				setattr( self, self._fields[_id], obj )
@@ -156,10 +162,11 @@ class Protocol( object ):
 	def __get_integer( self, value ):
 		"""
 			This will start where a integer is found and return the integer represented
-			as well as the advanced _value_ to continue parsing.
+			as well as the advance _value_ to continue parsing.
 		"""
 		cont_int = True
 		ret = 0
+
 		while cont_int:
 			v = value & 0x7F
 			if v & 0x80 == 0:
@@ -170,6 +177,27 @@ class Protocol( object ):
 		ret = Protocol._int.decode( ret )
 
 		return ( ret, value )
+
+	def __get_list( self, value, encoder ):
+		"""
+			This will start at the length part of the list of elements.
+			it will return the list and advance _value_ to continue parsing.
+		"""
+		ret = []
+		
+		length, value = self.__get_integer( value )
+
+		for i in xrange( length ):
+			if encoder._TYPE == Int._TYPE:
+				v, value = self.__get_integer( value )
+			elif encoder._TYPE == String._TYPE:
+				v, value = self.__get_string( value )
+			elif encoder._TYPE == Protocol._TYPE:
+				v, value = self.__get_object( value )
+
+			ret.append( v )
+
+		return ret, value
 
 
 	def __convert_body_to_string( self, value ):

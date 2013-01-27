@@ -80,3 +80,4 @@ def test_Protocol_decodes_nested_Protocols():
 	assert_equals( "Liss", g.first_name )
 	assert_equals( "Looo", g.last_name )
 	assert_equals( 21, g.age )
+
