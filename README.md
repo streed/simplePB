@@ -9,8 +9,8 @@ Messages are descirbed by simply defining class such as the Person below.
 
 ```python
 class Person( Protocol ):
- first_name = String( 10 ) #Max string length of 10.
- last_name = String( 10 )  #Max string length of 10.
+ first_name = String()
+ last_name = String()
  age = Int()   #Keep track of their age.
 ```
 
@@ -47,3 +47,11 @@ into a hex string which can be transmitted or stored.
 
 The above way of describing the class is very natural and requires no outside dependencies,
 besides this library.
+
+TODO
+=====
+
+ - [ ] Add _dict_ type support.
+ - [ ] Add _tuple_ type support.
+ - [ ] Add compression.
+ - [ ] Add in _unicode_ support.
