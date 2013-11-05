@@ -29,10 +29,24 @@ class TestGrammar( unittest.TestCase ):
 		p = IndentedAttribute.parseString( "list -> List:Int" )
 		self.assertEquals( { "key": "list", "value": { "List": "Int" } }, p[0] )
 
+	def test_inheirtence( self ):
+		p = InheritedProtocols.parseString( "| Test |" )
+
+		self.assertEquals( "Test", p[0] )
+
 	def test_protocol( self ):
 		p = IndentedProtocol.parseString( "proto Person ->\n\tname -> String\n\tage -> Int\n" )
 		self.assertEquals( { "name": "Person", "attributes": [ { "key": "name", "value": "String" },
 								       { "key": "age", "value": "Int" } ] }, p[0] )
+
+	def test_protocol_inherit( self ):
+		p = IndentedProtocol.parseString( "proto Person | Test | ->\n\tname -> String\n\tage -> Int\n" )
+		self.assertEquals( { "name": "Person", 
+				     "parent": "Test", 
+				     "attributes": [ { "key": "name", "value": "String" },
+								       { "key": "age", "value": "Int" } ] }, p[0] )
+
+"""
 	def test_protocoldescription( self ):
 		p = ProtocolDescription.parseString( "package example\n\nproto Person ->\n\tname -> String\n\tage -> Int\n" )
 
@@ -56,4 +70,4 @@ class TestGrammar( unittest.TestCase ):
 							"attributes": [ 
 									{ "key": "name", "value": "String" },
 								       	{ "key": "age", "value": "Int" } ] } }, p[0] )
-
+"""

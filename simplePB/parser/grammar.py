@@ -13,6 +13,8 @@ from .generators.klass import Klass
 
 NL =  p.LineEnd().suppress()
 colon = p.Literal( ":" ).suppress()
+pipe = p.Literal( "|" ).suppress()
+comma = p.Literal( "," ).suppress()
 arrow = p.Keyword( "->" ).suppress()
 proto = p.Keyword( "proto" ).suppress()
 package = p.Keyword( "package" ).suppress()
@@ -62,10 +64,25 @@ INDENT = NL + p.Empty() + p.Empty().copy().setParseAction( checkSubIndent )
 UNDENT = p.FollowedBy( p.Empty() ).setParseAction( checkUnindent )
 UNDENT.setParseAction( doUndent )
 
+InheritedProtocols = pipe + word + pipe
+
 IndentedAttribute = Attribute.copy().setParseAction( checkPeerIndent )
 IndentedAttribute.setParseAction( lambda s, l, t: { "key": t[0], "value": t[1] } )
-IndentedProtocol = p.Group( proto + word + arrow + INDENT + p.Group( p.OneOrMore( IndentedAttribute ) ) + UNDENT )
-IndentedProtocol.setParseAction( lambda s, l, t: { "name": t[0][0], "attributes": t[0][1][:] } )
+IndentedProtocol = p.Group( proto + word + p.Optional( InheritedProtocols ) + arrow + INDENT + p.Group( p.OneOrMore( IndentedAttribute ) ) + UNDENT )
+
+def indentedProtocol( original, loc, tokens ):
+	tokens = tokens.pop()
+
+	if( len( tokens ) == 3 ):
+		return { "name": tokens[0],
+			 "parent": tokens[1],
+			 "attributes": tokens[2].asList() }
+	else:
+		return { "name": tokens[0],
+			 "attributes": tokens[1].asList() }
+
+IndentedProtocol.setParseAction( indentedProtocol )
+#IndentedProtocol.setParseAction( lambda s, l, t: print( t ) )
 
 ProtocolDescription = PackageName + p.Group( p.ZeroOrMore( Include ) ) + IndentedProtocol
 ProtocolDescription.setParseAction( lambda s, l, t: { "package": t[0], "includes": t[1][:], "protocol": t[2] } )
