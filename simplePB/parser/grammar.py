@@ -9,7 +9,7 @@ proto Person {
 """
 import pyparsing as p
 
-from generators.klass import Klass
+from .generators.klass import Klass
 
 NL =  p.LineEnd().suppress()
 colon = p.Literal( ":" ).suppress()
@@ -92,6 +92,3 @@ def createClassFile( p ):
 		c = Klass( includes=p["includes"], **p["protocol"] )	
 
 		f.write( c.generate() )
-
-if __name__ == "__main__":
-	createClassFile( protocolParseFile( open( "./simplePB/examples/family.pb" ) ) )
