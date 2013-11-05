@@ -22,11 +22,11 @@ class TestGrammar( unittest.TestCase ):
 		self.assertEquals( { "List": "String" }, p[0] )
 
 	def test_attribute_normal( self ):
-		p = Attribute.parseString( "name -> String" )
+		p = IndentedAttribute.parseString( "name -> String" )
 		self.assertEquals( { "key": "name", "value": "String" }, p[0] )
 
 	def test_attribute_list( self ):
-		p = Attribute.parseString( "list -> List:Int" )
+		p = IndentedAttribute.parseString( "list -> List:Int" )
 		self.assertEquals( { "key": "list", "value": { "List": "Int" } }, p[0] )
 
 	def test_protocol( self ):

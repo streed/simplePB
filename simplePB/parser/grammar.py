@@ -9,6 +9,8 @@ proto Person {
 """
 import pyparsing as p
 
+from generators.klass import Klass
+
 NL =  p.LineEnd().suppress()
 colon = p.Literal( ":" ).suppress()
 arrow = p.Keyword( "->" ).suppress()
@@ -27,7 +29,6 @@ List = value + colon + value
 List.setParseAction( lambda s, l, t: { t[0]: t[1] } )
 Attribute = key + arrow + p.Or( [ value, List ] )  + NL
 Attribute.setParseAction( lambda s, l, t: { "key": t[0], "value": t[1] } )
-Protocol = proto + word + openBracket + p.OneOrMore( NL ) + p.OneOrMore( Attribute ) + p.Optional( NL ) + closeBracket
 
 indentStack = [1]
 def checkPeerIndent( s, l, t ):
@@ -86,17 +87,11 @@ def createClassFile( p ):
 
 	with open( "./test%s.py" % p["protocol"]["name"], "w" ) as f:
 		for i in p["includes"]:
-			f.write( "from .%s import %s\n" % ( i["protocol"]["name"], i["protocol"]["name"] ) )
 			createClassFile( i )
 
-		f.write( "class %s:\n" % p["protocol"]["name"] )
-		f.write( "\t__metaclass__ = simplePB.metaclass.GeneratedMetaClass\n" )
-		for i in p["protocol"]["attributes"]:
-			if( "List" in i["value"] ):
-				f.write( "\t%s = List( %s() )\n" % ( i["key"], i["value"]["List"] ) )
-			else:
-				f.write( "\t%s = %s()\n" % ( i["key"], i["value"] ) )
-	
+		c = Klass( includes=p["includes"], **p["protocol"] )	
+
+		f.write( c.generate() )
 
 if __name__ == "__main__":
 	createClassFile( protocolParseFile( open( "./simplePB/examples/family.pb" ) ) )
