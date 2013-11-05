@@ -1,9 +1,9 @@
 package examples
 
-include person
-include child
+include person.pb
+include child.pb
 
-proto Family {
+proto Family ->
 	parents -> List:Person
 	children -> List:Children
-}
+

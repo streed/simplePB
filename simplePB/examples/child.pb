@@ -1,7 +1,7 @@
 package examples
 
-proto Child {
+proto Child ->
 	age -> Int
 	name -> String
 	favoriteColor -> String
-}
+

@@ -4,6 +4,10 @@ from ..parser.grammar import *
 
 class TestGrammar( unittest.TestCase ):
 
+	def setUp( self ):
+		global indentStack
+		indentStack = [1]
+
 	def test_include( self ):
 		p = Include.parseString( "include test.pb" )
 		self.assertEquals( "test.pb", p[0] )
@@ -26,12 +30,11 @@ class TestGrammar( unittest.TestCase ):
 		self.assertEquals( { "key": "list", "value": { "List": "Int" } }, p[0] )
 
 	def test_protocol( self ):
-		p = Protocol.parseString( "proto Person {\n\tname -> String\n\tage -> Int\n}" )
+		p = IndentedProtocol.parseString( "proto Person ->\n\tname -> String\n\tage -> Int\n" )
 		self.assertEquals( { "name": "Person", "attributes": [ { "key": "name", "value": "String" },
 								       { "key": "age", "value": "Int" } ] }, p[0] )
-
 	def test_protocoldescription( self ):
-		p = ProtocolDescription.parseString( "package example\n\nproto Person {\n\tname -> String\n\tage -> Int\n}" )
+		p = ProtocolDescription.parseString( "package example\n\nproto Person ->\n\tname -> String\n\tage -> Int\n" )
 
 		self.assertEquals( { 
 					"package": "example", 
@@ -43,7 +46,7 @@ class TestGrammar( unittest.TestCase ):
 								       	{ "key": "age", "value": "Int" } ] } }, p[0] )
 
 	def test_protocoldescription_includes( self ):
-		p = ProtocolDescription.parseString( "package example\ninclude child.pb\nproto Person {\n\tname -> String\n\tage -> Int\n}" )
+		p = ProtocolDescription.parseString( "package example\ninclude child.pb\nproto Person ->\n\tname -> String\n\tage -> Int\n" )
 
 		self.assertEquals( { 
 					"package": "example", 
