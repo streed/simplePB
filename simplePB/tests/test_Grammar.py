@@ -46,7 +46,6 @@ class TestGrammar( unittest.TestCase ):
 				     "attributes": [ { "key": "name", "value": "String" },
 								       { "key": "age", "value": "Int" } ] }, p[0] )
 
-"""
 	def test_protocoldescription( self ):
 		p = ProtocolDescription.parseString( "package example\n\nproto Person ->\n\tname -> String\n\tage -> Int\n" )
 
@@ -70,4 +69,17 @@ class TestGrammar( unittest.TestCase ):
 							"attributes": [ 
 									{ "key": "name", "value": "String" },
 								       	{ "key": "age", "value": "Int" } ] } }, p[0] )
-"""
+
+	def test_protocoldescirption_all( self ):
+		p = ProtocolDescription.parseString( "package example\ninclude child.pb\nproto Person | Life | ->\n\tname -> String\n\tage -> Int\n" )
+
+		self.assertEquals( { 
+					"package": "example", 
+					"includes": [ "child.pb" ], 
+					"protocol": { 
+							"name": "Person", 
+							"parent": "Life",
+							"attributes": [ 
+									{ "key": "name", "value": "String" },
+								       	{ "key": "age", "value": "Int" } ] } }, p[0] )
+
