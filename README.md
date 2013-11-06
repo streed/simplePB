@@ -27,7 +27,7 @@ adding the following additional functionality.
 This above allows for the following situation
 
 _header.pb_
-```python
+```ruby
 package example
 
 proto Header ->
@@ -37,7 +37,7 @@ proto Header ->
 ```
 
 _message.pb_
-```python
+```ruby
 package example
 
 import header.pb
@@ -51,7 +51,7 @@ proto Message | Header | ->
 ```
 
 _heartbeat.pb_
-```python
+```ruby
 package example
 
 import message.pb
