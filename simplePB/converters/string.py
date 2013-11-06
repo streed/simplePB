@@ -33,3 +33,16 @@ class String( Converter ):
 		ret.reverse()
 
 		return "".join( ret )
+
+	def _get( self, value ):
+		l, value = self._int._get( value )
+
+		s = 0
+		for i in range( l ):
+			v = value & 0xFF
+			s = ( s << 8 ) | v
+			value = value >> 8
+
+		s = self.decode( s )
+
+		return s, value

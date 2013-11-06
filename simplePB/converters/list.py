@@ -18,7 +18,6 @@ class List( Converter ):
 		length = List._int.encode( len( value ) )
 
 		ret = length
-		shift = 0
 		for v in value:
 			temp = self.encoder.encode( v )        
 
@@ -32,3 +31,18 @@ class List( Converter ):
 	def decode( self, value ):
 		"""This will take the `value` and decode it
 		into the original list."""
+
+		value = self._reverse_bits( value )
+
+		ret = []
+		l, value = self._int._get( value )
+
+		while value > 0:
+			v, value = self.encoder._get( value )
+			ret.append( v )
+
+		return ret
+
+
+
+

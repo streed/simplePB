@@ -11,7 +11,8 @@ class TestList( unittest.TestCase ):
 		tests.append( 2 )
 		tests.append( 3 )
 
-		self.assertEquals( int( "06020406", 16 ), l.encode( tests ) )
+
+		self.assertEquals( 0x06020406, l.encode( tests ) )
 
 		l = List( String() )
 		names = []
@@ -19,17 +20,16 @@ class TestList( unittest.TestCase ):
 		names.append( "AB" )
 		names.append( "ABC" )
 
-		self.assertEquals( int( "06024104414206414243", 16 ), l.encode( names ) )
+		self.assertEquals( 0x06024104414206414243, l.encode( names ) )
 
 	def test_List_decodes_the_values_correctly( self ):
 
-		#l = List( Integer() )
-		#tests = l.decode( "020802040608" )
+		l = List( Integer() )
+		tests = l.decode( 0x06020406 )
 
-		#self.assertEquals( [ 1, 2, 3, 4 ], tests )
+		self.assertEquals( [ 1, 2, 3 ], tests )
 
-		#l = List( String() )
-		#names = l.decode( "0206024104414206414243" )
+		l = List( String() )
+		names = l.decode( 0x06024104414206414243 )
 
-		#self.assertEquals( [ "A", "AB", "ABC" ], names )
-		pass
+		self.assertEquals( [ "A", "AB", "ABC" ], names )

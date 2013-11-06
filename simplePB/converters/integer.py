@@ -48,3 +48,18 @@ class Integer( Converter ):
 			value = value >> 8
 		return ZigZag.decode( ret )
 
+	
+	def _get( self, value ):
+		cont = True
+		ret = 0
+
+		while cont:
+			v = value & 0x7F
+			if v & 0x80 == 0:
+				cont = False
+			ret = ( ret << 8 ) | v
+			value = value >> 8
+
+		ret = self.decode( ret )
+
+		return ret, value 
