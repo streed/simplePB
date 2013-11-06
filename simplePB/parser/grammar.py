@@ -49,8 +49,10 @@ One note is that atrtibutes must have a tab or spacing that is consistent, such 
 for python when using a new code block.
 
 """
+__author__ = "streed"
+__version__ = "0.0"
 
-__author__ = "streed@maik.roanoke.edu"
+
 import pyparsing as p
 
 from .generators.klass import Klass
