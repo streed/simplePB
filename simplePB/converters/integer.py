@@ -40,15 +40,18 @@ class Integer( Converter ):
 		return ret
 	
 	def decode( self, value ):
+		"""This will decode value as if it is a integer."""
 		ret = 0
 		shift = 0
+
 		while value > 0:
 			group = value & 0x7F
 			ret = ( ret << 7 ) | group
 			value = value >> 8
+
 		return ZigZag.decode( ret )
 
-	
+
 	def _get( self, value ):
 		cont = True
 		ret = 0
