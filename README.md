@@ -62,3 +62,52 @@ proto HeartBeat | Message | ->
 ```
 The above class hierarchy allows for a common base _Header_ class to be defined that then allows for common fields to be moved there and independently
 modified with respect to its sub-class Protocols.
+
+The above compilation of data members in the ``HeartBeat`` protocol is identical to the following definition:
+
+```ruby
+package example
+
+proto HeartBeat ->
+	id -> Int
+	length -> Int
+	message -> String
+	from -> String
+	to -> List:String
+	timestamp -> Date
+	heartbeatId -> Int
+```
+
+But, this much more verbose version is a ``HeartBeat`` message that contains much more data that ultimately should not be handled
+in the ``HeartBeat`` protocol and should be pushed down into parent protocols. This also allows for polymorphism when dealing with
+the messages for example that along with the heart beat there is another message as such:
+
+```ruby
+package example
+
+import message
+
+proto Hosts | Message | ->
+	hosts -> List:String
+```
+
+```python
+from example.hosts import Hosts
+from example.heartbeat import HeartBeat
+
+hs = Hosts()
+hs.hosts.concat( [ "10.0.0.1", "10.0.0.2", 10.0.0.3" ] )
+
+hb = HeartBeat()
+hb.heartBeatId = 100
+
+messages = [ hs, hb ]
+
+for m in messages:
+    send( messages, to="10.0.0.5", from="10.0.0.6" )
+
+```
+
+In the case above the send message simply works with ``Message`` protocols. And, thus does not care that there is a list
+of ``hosts`` or a ``heartBeatId`` tacked onto the messages. When the message is finally sent the method ``serialize`` is
+called and everything is handled automatically and the receiving client will properly read the messages.
