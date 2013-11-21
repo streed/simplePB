@@ -4,7 +4,8 @@ class Klass( object ):
 	IMPORT = "import simplePB"
 	METACLASS = "__metaclass__ = simplePB.metaclass.GeneratedMetaclass"
 
-	def __init__( self, name=None, attributes=[], includes=[] ):
+	def __init__( self, name=None, package=None, attributes=[], includes=[] ):
+		self.package = package
 		self.name = name
 		self.attributes = attributes
 		self.includes = includes

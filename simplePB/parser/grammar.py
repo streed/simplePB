@@ -55,8 +55,6 @@ __version__ = "0.0"
 
 import pyparsing as p
 
-from .generators.klass import Klass
-
 #The stack variable for parsing the tab/space nesting.
 indentStack = [1]
 def checkPeerIndent( s, l, t ):
@@ -112,9 +110,13 @@ closeBracket = p.Literal( "}" ).suppress()
 word = p.Word( p.alphas )
 key = word
 value = word
+dot = p.Literal( "." ).suppress()
 Include = p.Keyword( "include" ) + p.Combine( p.Word( p.alphanums ) + ".pb" ) + p.OneOrMore( NL )
 Include.setParseAction( lambda s, l, t: t[1] )
-PackageName = package + word + p.OneOrMore( NL )
+PackagePart = word + dot
+PackageParts = p.Group( p.OneOrMore( PackagePart ) + word )
+PackageParts.setParseAction( lambda s, l, t: ".".join( t[0] ) )
+PackageName = package + p.Or( [ PackageParts, word ] ) + p.OneOrMore( NL )
 List = value + colon + value
 List.setParseAction( lambda s, l, t: { t[0]: t[1] } )
 Attribute = key + arrow + p.Or( [ value, List ] )  + NL
@@ -145,16 +147,4 @@ def protocolParseFile( f ):
 		parsed["includes"].append( protocolParseFile( open( p, "r" ) ) )
 
 	return parsed
-
-def createClassFile( p ):
-	"""This will take the parsed file and write out the python classes for it
-	and any of its included files.
-	"""
-	with open( "./test%s.py" % p["protocol"]["name"], "w" ) as f:
-		for i in p["includes"]:
-			createClassFile( i )
-
-		c = Klass( includes=p["includes"], **p["protocol"] )	
-
-		f.write( c.generate() )
 

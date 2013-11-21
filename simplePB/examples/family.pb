@@ -1,7 +1,7 @@
-package examples
+package examples.family
 
-include person.pb
-include child.pb
+include .base.person
+include .children.child
 
 proto Family ->
 	parents -> List:Person

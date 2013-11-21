@@ -1,4 +1,4 @@
-package examples
+package examples.base
 
 proto Person ->
 	name -> String

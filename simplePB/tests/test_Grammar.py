@@ -17,6 +17,11 @@ class TestGrammar( unittest.TestCase ):
 
 		self.assertEquals( "examples", p[0] )
 
+	def test_nest_packagename( self ):
+		p = PackageName.parseString( "package example.examples.exampless" )
+
+		self.assertEquals( "example.examples.exampless", p[0] )
+
 	def test_list( self ):
 		p = List.parseString( "List:String" )
 		self.assertEquals( { "List": "String" }, p[0] )

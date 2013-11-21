@@ -1,4 +1,4 @@
-package examples
+package examples.children
 
 proto Child ->
 	age -> Int
