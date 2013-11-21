@@ -8,9 +8,9 @@ class TestGrammar( unittest.TestCase ):
 		global indentStack
 		indentStack = [1]
 
-	def test_include( self ):
-		p = Include.parseString( "include test.pb" )
-		self.assertEquals( "test.pb", p[0] )
+	def test_import( self ):
+		p = Import.parseString( "import test" )
+		self.assertEquals( "test", p[0] )
 
 	def test_packagename( self ):
 		p = PackageName.parseString( "package examples" )
@@ -56,19 +56,19 @@ class TestGrammar( unittest.TestCase ):
 
 		self.assertEquals( { 
 					"package": "example", 
-					"includes": [], 
+					"imports": [], 
 					"protocol": { 
 							"name": "Person", 
 							"attributes": [ 
 									{ "key": "name", "value": "String" },
 								       	{ "key": "age", "value": "Int" } ] } }, p[0] )
 
-	def test_protocoldescription_includes( self ):
-		p = ProtocolDescription.parseString( "package example\ninclude child.pb\nproto Person ->\n\tname -> String\n\tage -> Int\n" )
+	def test_protocoldescription_imports( self ):
+		p = ProtocolDescription.parseString( "package example\nimport child\nproto Person ->\n\tname -> String\n\tage -> Int\n" )
 
 		self.assertEquals( { 
 					"package": "example", 
-					"includes": [ "child.pb" ], 
+					"imports": [ "child" ], 
 					"protocol": { 
 							"name": "Person", 
 							"attributes": [ 
@@ -76,11 +76,11 @@ class TestGrammar( unittest.TestCase ):
 								       	{ "key": "age", "value": "Int" } ] } }, p[0] )
 
 	def test_protocoldescirption_all( self ):
-		p = ProtocolDescription.parseString( "package example\ninclude child.pb\nproto Person | Life | ->\n\tname -> String\n\tage -> Int\n" )
+		p = ProtocolDescription.parseString( "package example\nimport child\nproto Person | Life | ->\n\tname -> String\n\tage -> Int\n" )
 
 		self.assertEquals( { 
 					"package": "example", 
-					"includes": [ "child.pb" ], 
+					"imports": [ "child" ], 
 					"protocol": { 
 							"name": "Person", 
 							"parent": "Life",

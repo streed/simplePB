@@ -15,7 +15,7 @@ child.pb
 
 package examples
 
-include human.pb
+import human.pb
 
 proto Child | Human | ->
 	favoriteColor -> String
@@ -24,18 +24,18 @@ parent.pb
 >>>>>>>
 package examples
 
-include human.pb
-include child.pb
+import human.pb
+import child.pb
 
 proto Parent | Human | ->
 	familySize -> Int
 	numberOfChildren -> Int
 	children -> List:Children
 
-Protocol := package + includes + proto
+Protocol := package + imports + proto
 package := "package" word
-includes := include | include + includes
-include := "include" word
+imports := import | import + imports
+import := "import" word
 proto := ( proto word | proto word parent ) arrow attributes
 attributes := attribute | attribute attributes
 attribute := word arrow word
@@ -111,8 +111,8 @@ word = p.Word( p.alphas )
 key = word
 value = word
 dot = p.Literal( "." ).suppress()
-Include = p.Keyword( "include" ) + p.Combine( p.Word( p.alphanums ) + ".pb" ) + p.OneOrMore( NL )
-Include.setParseAction( lambda s, l, t: t[1] )
+Import = p.Keyword( "import" ) + p.Combine( p.Word( p.alphanums ) ) + p.OneOrMore( NL )
+Import.setParseAction( lambda s, l, t: t[1] )
 PackagePart = word + dot
 PackageParts = p.Group( p.OneOrMore( PackagePart ) + word )
 PackageParts.setParseAction( lambda s, l, t: ".".join( t[0] ) )
@@ -126,25 +126,29 @@ IndentedAttribute = Attribute.copy().setParseAction( checkPeerIndent )
 IndentedAttribute.setParseAction( lambda s, l, t: { "key": t[0], "value": t[1] } )
 IndentedProtocol = p.Group( proto + word + p.Optional( InheritedProtocols ) + arrow + INDENT + p.Group( p.OneOrMore( IndentedAttribute ) ) + UNDENT )
 IndentedProtocol.setParseAction( indentedProtocol )
-ProtocolDescription = PackageName + p.Group( p.ZeroOrMore( Include ) ) + IndentedProtocol
-ProtocolDescription.setParseAction( lambda s, l, t: { "package": t[0], "includes": t[1][:], "protocol": t[2] } )
+ProtocolDescription = PackageName + p.Group( p.ZeroOrMore( Import ) ) + IndentedProtocol
+ProtocolDescription.setParseAction( lambda s, l, t: { "package": t[0], "imports": t[1][:], "protocol": t[2] } )
 
 def protocolParseFile( f ):
 	"""This will parse the file handle `f` and then return the dict that explains the
-	parsed information. This will also parse and recursively read in all of the includes.
+	parsed information. This will also parse and recursively read in all of the imports.
 
 	TODO: Add in a method to detect a circular dependency otherwise this could cause serious
 	problems.
 	"""
+
+	#we need to make the folder that this
+	#parsed file will live in.
+	# currentPath + package
 	path = list( os.path.split( f.name )[:1] )
 	parsed = ProtocolDescription.parseFile( f )[0]
 	
-	includes = parsed["includes"][:]
-	parsed["includes"] = []
+	imports = parsed["imports"][:]
+	parsed["imports"] = []
 
-	for i in includes:
+	for i in imports:
 		p = os.path.join( path[0], i )
-		parsed["includes"].append( protocolParseFile( open( p, "r" ) ) )
+		parsed["imports"].append( protocolParseFile( open( p, "r" ) ) )
 
 	return parsed
 
