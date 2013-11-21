@@ -40,7 +40,7 @@ _message.pb_
 ```ruby
 package example
 
-import header.pb
+import header
 
 proto Message | Header | ->
 	message -> String
@@ -54,7 +54,7 @@ _heartbeat.pb_
 ```ruby
 package example
 
-import message.pb
+import message
 
 proto HeartBeat | Message | ->
 	heartbeatId -> Int
