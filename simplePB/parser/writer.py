@@ -6,17 +6,32 @@ def create_modules( package ):
 	a method to have nested packages inside of each
 	other, but this will require the ability to fix
 	up the imports correctly as well."""
-	os.mkdir( package )
+
+	#we need to make the package directory.
+	#we need to make the folder that this
+	#parsed file will live in.
+	# currentPath + package
+	paths = parsed["package"].split( "." )
+	package = os.path.join( "./", os.path.join( *paths ) )
+	os.makekdirs( package )
+
+	#Create the __init__.py files
+	temp = "./"
+	for p in paths:
+		temp = os.path.join( temp, p )
+
+		init = open( "%s/__init__.py" % temp )
+		init.close()
 
 def createClassFile( p ):
 	"""This will take the parsed file and write out the python classes for it
 	and any of its included files.
 	"""
 
-	#we need to make the package directory.
-	os.mkdir( p["package"] )
 	create_modules( p["package"] )
-	with open( "./%s/%s.py" %( p["package"],  p["protocol"]["name"] ), "w" ) as f:
+	name = p["protocol"]["name"]
+	name.lower()
+	with open( "./%s/%s.py" %( p["package"],  name ), "w" ) as f:
 		for i in p["includes"]:
 			createClassFile( i )
 

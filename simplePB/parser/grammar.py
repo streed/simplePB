@@ -137,12 +137,9 @@ def protocolParseFile( f ):
 	problems.
 	"""
 
-	#we need to make the folder that this
-	#parsed file will live in.
-	# currentPath + package
 	path = list( os.path.split( f.name )[:1] )
 	parsed = ProtocolDescription.parseFile( f )[0]
-	
+
 	imports = parsed["imports"][:]
 	parsed["imports"] = []
 

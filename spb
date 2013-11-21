@@ -1,0 +1,28 @@
+#!/usr/bin/python
+
+"""
+SimplePB is a pure python implementation of the Google Protocol Buffer project.
+
+Written by: Sean Reed
+
+Usage:
+	spb build <pb_location>... [--verbose]
+	spb clean <pb_location>... [--verbose]
+	spb check <pb_location>... [--verbose]
+
+Options:
+	-h, --help		Show this message.
+	--verbose		Should there be debug print statements?
+	build			Compile and build all of your protocol buffer files.
+	clean			Deletes all of the files from a build.
+	check			Just parses your protocol buffer files without outputing anything.
+	<pb_location>...	The location(s) of the .pb files to be checked/parsed.
+
+"""
+
+from docopt import docopt
+
+if __name__ == "__main__":
+	arguements = docopt( __doc__, version="SimplePB 1.0" )
+
+	print( arguements )
