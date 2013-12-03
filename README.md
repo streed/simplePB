@@ -21,8 +21,8 @@ But, I wanted to take it a step further and create a DSL on top of the protocol 
 This mimics the current Protocol Buffers offered by Google, but to allow for the flexibility for my projects I am building ontop of this and
 adding the following additional functionality.
 
-* Protocols can inherit from other Protocols.
-* Protocols can overload member fields from inherited Protocols.
+* Protocols can be composed from other Protocols
+* Protocol compositions allow for a inheritence structure, without the complications.
 
 This above allows for the following situation
 
@@ -60,11 +60,10 @@ proto HeartBeat | Message | ->
 	heartbeatId -> Int
 
 ```
-The above class hierarchy allows for a common base _Header_ class to be defined that then allows for common fields to be moved there and independently
-modified with respect to its sub-class Protocols.
+The above definitions show that a ``HeartBeat`` is a composition of a ``HeartBeat`` and a ``Message``, but a ``Message``
+is also a composition of a ``Message`` and a ``Header``. 
 
-The above compilation of data members in the ``HeartBeat`` protocol is identical to the following definition:
-
+This composition can be expanded into a single definition as shown below:
 ```ruby
 package example
 
