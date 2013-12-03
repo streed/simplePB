@@ -10,6 +10,8 @@ class Converter( object ):
 		"""This will take an encoded value and decode it
 		back to its original unencoded value."""
 
+	#TODO: Find a faster method of doing this, or remove the need for it in the
+	#first place.
 	def _reverse_bits( self, n ):
 		nn = 0
 
