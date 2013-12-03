@@ -96,7 +96,7 @@ from example.hosts import Hosts
 from example.heartbeat import HeartBeat
 
 hs = Hosts()
-hs.hosts.concat( [ "10.0.0.1", "10.0.0.2", 10.0.0.3" ] )
+hs.hosts.concat( [ "10.0.0.1", "10.0.0.2", "10.0.0.3" ] )
 
 hb = HeartBeat()
 hb.heartBeatId = 100
