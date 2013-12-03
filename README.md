@@ -9,7 +9,7 @@ Defining a suitable communication protocol can be difficult and hard to maintain
 
 Solution:
 =========
-Looking at the Google library [Protocol Buffers](https://developers.google.com/protocol-buffers) I found a conventient soluton to my problem.
+Looking at the Google library [Protocol Buffers](https://developers.google.com/protocol-buffers) I found a convenient soluton to my problem.
 But, I wanted to take it a step further and create a DSL on top of the protocol buffers themselves and from this allow for the following properties.
 
 * Protocols are broken into _proto_ classes.
@@ -18,14 +18,12 @@ But, I wanted to take it a step further and create a DSL on top of the protocol 
 * Objects sent will be serialized into a binary format that can be represented in Base64.
 * Objects read can be deserialized back into their Python object.
 
-This mimics the current Protocol Buffers offered by Google, but to allow for the flexibility for my projects I am building ontop of this and
-adding the following additional functionality.
+This mimics the current Protocol Buffers offered by Google, but to allow for the flexibility for my projects I am building ontop of this and adding the following additional functionality.
 
 * Protocols can be composed from other Protocols
-* Protocol compositions allow for a inheritence structure, without the complications.
+* Protocol compositions allow for a inheritence structure, without the complications (no overloading).
 
-This above allows for the following situation
-
+This above allows for the following situation:
 _header.pb_
 ```ruby
 package example
@@ -35,7 +33,6 @@ proto Header ->
 	length -> Int
 
 ```
-
 _message.pb_
 ```ruby
 package example
@@ -49,7 +46,6 @@ proto Message | Header | ->
 	timestamp -> Date
 
 ```
-
 _heartbeat.pb_
 ```ruby
 package example
@@ -89,7 +85,6 @@ import message
 proto Hosts | Message | ->
 	hosts -> List:String
 ```
-
 ```python
 from example.hosts import Hosts
 from example.heartbeat import HeartBeat
