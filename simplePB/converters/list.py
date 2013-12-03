@@ -48,8 +48,7 @@ class List( Converter ):
 		ret = []
 		l, value = self._int._get( value )
 
-		#Loop over the values l times.
-		for _ in range( l ):
+		while value > 0:
 			v, value = self.encoder._get( value )
 			ret.append( v )
 
