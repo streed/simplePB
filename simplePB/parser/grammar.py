@@ -55,6 +55,7 @@ __version__ = "0.0"
 
 import pyparsing as p
 
+#TODO Make this thread-safe
 #The stack variable for parsing the tab/space nesting.
 indentStack = [1]
 def checkPeerIndent( s, l, t ):
