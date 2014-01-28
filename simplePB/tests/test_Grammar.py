@@ -10,7 +10,7 @@ class TestGrammar( unittest.TestCase ):
 
 	def test_import( self ):
 		p = Import.parseString( "import test" )
-		self.assertEquals( "test", p[0] )
+		self.assertEquals( "test.pb", p[0] )
 
 	def test_packagename( self ):
 		p = PackageName.parseString( "package examples" )
@@ -68,7 +68,7 @@ class TestGrammar( unittest.TestCase ):
 
 		self.assertEquals( { 
 					"package": "example", 
-					"imports": [ "child" ], 
+					"imports": [ "child.pb" ], 
 					"protocol": { 
 							"name": "Person", 
 							"attributes": [ 
@@ -80,7 +80,7 @@ class TestGrammar( unittest.TestCase ):
 
 		self.assertEquals( { 
 					"package": "example", 
-					"imports": [ "child" ], 
+					"imports": [ "child.pb" ], 
 					"protocol": { 
 							"name": "Person", 
 							"parent": "Life",
