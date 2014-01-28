@@ -3,7 +3,14 @@ from .converter import Converter
 from .integer import Integer
 
 class List( Converter ):
-
+	"""This will properly encode/decode a list of Convertable
+	objects, such as Protocols, Integers, and Strings.
+	
+	Lists can only hold a single type of values, unlike
+	a typical python list where different kinds of objects"""
+	
+	#Private Integer to serialize/deserialize the length
+	#of the list.
 	_int =	Integer()
 	
 	def __init__( self, encoder ):
@@ -21,7 +28,8 @@ class List( Converter ):
 		for v in value:
 			temp = self.encoder.encode( v )        
 
-			#get number of bits rounded to the nearest 8
+			#TODO: Move this into a util function.
+			#Get number of bits rounded to the nearest 8
 			bits = math.log( temp, 2 )
 			shift_distance = int( math.ceil( bits / 8 ) * 8 )
 			ret = ( ret << shift_distance ) | temp
@@ -32,8 +40,11 @@ class List( Converter ):
 		"""This will take the `value` and decode it
 		into the original list."""
 
+		#Bits are reversed because of how they are
+		#encoded.
 		value = self._reverse_bits( value )
 
+		#Get the length of the list,
 		ret = []
 		l, value = self._int._get( value )
 
