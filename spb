@@ -6,9 +6,9 @@ SimplePB is a pure python implementation of the Google Protocol Buffer project.
 Written by: Sean Reed
 
 Usage:
-	spb build <pb_location>... [--verbose]
-	spb clean <pb_location>... [--verbose]
-	spb check <pb_location>... [--verbose]
+	spb build <pb_location> [--verbose]
+	spb clean <pb_location> [--verbose]
+	spb check <pb_location> [--verbose]
 
 Options:
 	-h, --help		Show this message.
@@ -19,10 +19,23 @@ Options:
 	<pb_location>...	The location(s) of the .pb files to be checked/parsed.
 
 """
-
+from simplePB.parser.grammar import protocolParseFile
 from docopt import docopt
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+
+log = logging.getLogger( "spb" )
 
 if __name__ == "__main__":
-	arguements = docopt( __doc__, version="SimplePB 1.0" )
+    arguments = docopt( __doc__, version="SimplePB 1.0" )
 
-	print( arguements )
+    if arguments["--verbose"]:
+        log.setLevel( logging.DEBUG )
+        
+    if arguments["build"]:
+        log.debug( "Building the proto's in %s" % ( arguments["<pb_location>"] ) )
+
+        with open( arguments["<pb_location>"] ) as f:
+            generated = protocolParseFile( f )
+
+        log.debug( "Finished generating %s" % ( arguments["<pb_location>"] ) )

@@ -112,7 +112,7 @@ key = word
 value = word
 dot = p.Literal( "." ).suppress()
 Import = p.Keyword( "import" ) + p.Combine( p.Word( p.alphanums ) ) + p.OneOrMore( NL )
-Import.setParseAction( lambda s, l, t: t[1] )
+Import.setParseAction( lambda s, l, t: t[1] + ".pb" )
 PackagePart = word + dot
 PackageParts = p.Group( p.OneOrMore( PackagePart ) + word )
 PackageParts.setParseAction( lambda s, l, t: ".".join( t[0] ) )

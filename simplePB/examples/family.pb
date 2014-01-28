@@ -1,7 +1,7 @@
 package examples.family
 
-import base.person
-import children.child
+import person
+import child
 
 proto Family ->
 	parents -> List:Person
