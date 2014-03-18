@@ -7,21 +7,21 @@ class TestKlass( unittest.TestCase ):
 	SIMPLE_FILE = """import simplePB
 
 class Person:
-    __metaclass__ = simplePB.metaclass.GeneratedMetaclass
+    __metaclass__ = simplePB.metaclass.generatedmetaclass.GeneratedMetaclass
     name = String()
     age = Int()
 """
 	MEMBER_LIST_FILE = """import simplePB
 
 class Person:
-    __metaclass__ = simplePB.metaclass.GeneratedMetaclass
+    __metaclass__ = simplePB.metaclass.generatedmetaclass.GeneratedMetaclass
     name = List( String() )
     age = Int()
 """
 	INCLUDES_FILE = """import simplePB
 import Child
 class Person:
-    __metaclass__ = simplePB.metaclass.GeneratedMetaclass
+    __metaclass__ = simplePB.metaclass.generatedmetaclass.GeneratedMetaclass
     name = String()
     age = Int()
 """

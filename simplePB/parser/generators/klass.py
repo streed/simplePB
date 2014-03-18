@@ -2,7 +2,7 @@
 class Klass( object ):
 
 	IMPORT = "import simplePB"
-	METACLASS = "__metaclass__ = simplePB.metaclass.GeneratedMetaclass"
+	METACLASS = "__metaclass__ = simplePB.metaclass.generatedmetaclass.GeneratedMetaclass"
 
 	def __init__( self, name=None, package=None, attributes=[], includes=[] ):
 		self.package = package
