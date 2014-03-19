@@ -1,7 +1,14 @@
 
+def _serialize( self, out=0 ):
+  if( out == 0 ):
+    return simplePB.representation.concatBinary( self._fields )
+  elif( out == 1 ):
+    return simplePB.representation.binaryToHex( self._serialize( out=0 ) )
+
+
 class GeneratedMetaclass( type ):
 
-  def __init__( cls, name, bases, dct ):
+  def __new__( meta, cls, bases, dct ):
     """
       In order to make sure that the classes work the following needs
       to be added to the generated classes:
@@ -36,4 +43,7 @@ class GeneratedMetaclass( type ):
               return self._serialize( out=simplePB.representation.hex )
 
     """
-    super( GeneratedMetaclass, cls ).__init__( name, bases, dct )
+    dct["_serialize"] = _serialize
+
+
+    return type.__new__( meta, cls, bases, dct )
