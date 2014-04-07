@@ -61,3 +61,4 @@ class String( Converter ):
 		s = self.decode( s )
 
 		return s, value
+

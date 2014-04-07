@@ -20,22 +20,40 @@ Options:
 
 """
 from simplePB.parser.grammar import protocolParseFile
+from simplePB.parser.writer import createClassFile
 from docopt import docopt
+import os
+import shutil
 import logging
 logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 log = logging.getLogger( "spb" )
 
 if __name__ == "__main__":
-    arguments = docopt( __doc__, version="SimplePB 1.0" )
+  arguments = docopt( __doc__, version="SimplePB 1.0" )
 
-    if arguments["--verbose"]:
-        log.setLevel( logging.DEBUG )
-        
-    if arguments["build"]:
-        log.debug( "Building the proto's in %s" % ( arguments["<pb_location>"] ) )
+  if arguments["--verbose"]:
+    log.setLevel( logging.DEBUG )
 
-        with open( arguments["<pb_location>"] ) as f:
-            generated = protocolParseFile( f )
+  if arguments["build"]:
+    log.debug( "Building the proto's in %s" % ( arguments["<pb_location>"] ) )
 
-        log.debug( "Finished generating %s" % ( arguments["<pb_location>"] ) )
+    with open( arguments["<pb_location>"] ) as f:
+      generated = protocolParseFile( f )
+      createClassFile( generated )
+
+    log.debug( "Finished generating %s" % ( arguments["<pb_location>"] ) )
+
+  elif arguments["clean"]:
+    log.debug( "Cleaning the protobuffers." )
+
+    with open( arguments["<pb_location>"] ) as f:
+      generated = protocolParseFile( f )
+
+      path = os.path.join( generated["package"].split( "." ) )
+      path = path[0]
+      path = "./" + path
+
+      shutil.rmtree( path )
+
+    log.debug( "Cleaned the protobuffers" )

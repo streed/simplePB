@@ -68,3 +68,4 @@ class Person:
 								{ "key": "age", "value": "Int" } ] } }
 		c = Klass( includes=p["includes"], **p["protocol"] )	
 		self.assertEquals( self.MEMBER_LIST_FILE, c.generate() )
+
