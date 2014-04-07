@@ -2,7 +2,6 @@
 class Klass( object ):
 
   IMPORT = "import simplePB"
-  METACLASS = "__metaclass__ = simplePB.metaclass.generatedmetaclass.GeneratedMetaclass"
 
   def __init__( self, name=None, package=None, attributes=[], includes=[] ):
     self.package = package
@@ -43,7 +42,7 @@ class Klass( object ):
   def generateImports( self ):
     m = []
     for i in self.includes:
-      m.append( "import %s" % i["protocol"]["name"] )
+      m.append( "from ..%s import %s" % i["protocol"]["name"], i["protocol"]["name"] )
 
     return "\n".join( m )
 
