@@ -25,6 +25,7 @@ class Person:
     name = String()
     age = Int()
 """
+"""
 	def test_generate_proper_file( self ):
 		p = {	
 				"package": "example", 
@@ -68,4 +69,4 @@ class Person:
 								{ "key": "age", "value": "Int" } ] } }
 		c = Klass( includes=p["includes"], **p["protocol"] )	
 		self.assertEquals( self.MEMBER_LIST_FILE, c.generate() )
-
+"""
